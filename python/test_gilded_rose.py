@@ -11,6 +11,14 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose.update_quality()
         self.assertEqual("foo", items[0].name)
 
+    def test_quality_increases_over_5_days(self):
+        items = [Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=15, quality=20)]
+        gilded_rose = GildedRose(items)
+        days = 6
+        for day in range(days):
+            gilded_rose.update_quality()
+        self.assertEqual(27, items[0].quality)
+        self.assertEqual(9, items[0].sell_in)
         
 if __name__ == '__main__':
     unittest.main()

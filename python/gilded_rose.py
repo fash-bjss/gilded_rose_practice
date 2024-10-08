@@ -5,87 +5,82 @@ class GildedRose(object):
     def __init__(self, items):
         self.items = items
 
-    def decrease_sell_in(self, item, n):
-        item.sell_in -= n
+    def decrease_sell_in(self, item, amount):
+        item.sell_in -= amount
 
-    def decrease_quality(self, item, n):
-        if item.quality < 0:
-            item.quality = 0
+    def decrease_quality(self, item, amount):
+        min_quality = 0
+        item.quality -= amount
+        if item.quality < min_quality:
+            item.quality = min_quality
+        
+
+    def increase_quality(self, item, amount):
+        max_quality = 50
+        if item.quality < max_quality:
+            item.quality += amount
             return
-        item.quality -= n
+        item.quality = max_quality
 
-    def increase_quality(self, item, n):
-        if item.quality > 50:
-            item.quality = 50
-            return   
-        item.quality += n
+    def is_past_sell_by_date(self, date):
+        final_day = 0
+        return date < final_day
+
+    def process_brie(self, item):
+        self.decrease_sell_in(item, 1)
+
+        if self.is_past_sell_by_date(item.sell_in):
+            self.increase_quality(item, 2)
+        else:
+            self.increase_quality(item, 1) 
+
+    def process_sulfuras(self, item):
+        return 
+    
+    def process_ticket(self, item):
+        thresholds = {
+            'first': 11,
+            'last': 6
+        }
+        self.increase_quality(item, 1)           
+
+        if item.sell_in < thresholds['first']:
+            self.increase_quality(item, 1)
+
+        if item.sell_in < thresholds['last']:
+            self.increase_quality(item, 1)
+
+        self.decrease_sell_in(item, 1)
+        if self.is_past_sell_by_date(item.sell_in):
+            self.decrease_quality(item, item.quality)
 
 
+    def process_conjured(self, item):
+        self.decrease_sell_in(item, 1)
+        self.decrease_quality(item, 2)
 
+    def process_default(self, item):
+        self.decrease_sell_in(item, 1)
+        
+        if self.is_past_sell_by_date(item.sell_in):
+            self.decrease_quality(item, 2)
+        else:
+            self.decrease_quality(item, 1)
+
+    def process_items(self):
+        items_functions = {
+            'Aged Brie': self.process_brie,
+            'Sulfuras, Hand of Ragnaros': self.process_sulfuras,
+            'Backstage passes to a TAFKAL80ETC concert': self.process_ticket,
+            'Conjured Mana Cake': self.process_conjured,
+            'default': self.process_default,
+        }
+
+        for item in self.items:
+            items_functions.get(item.name, items_functions['default'])(item)
 
     def update_quality(self):
-        for item in self.items:
-
-            if item.name == 'Aged Brie':
-                self.decrease_sell_in(item, 1)
-
-                if item.sell_in < 0:
-                    self.increase_quality(item, 2)
-                else:
-                    self.increase_quality(item, 1)
-            
-            elif item.name == 'Sulfuras, Hand of Ragnaros':
-                pass
-
-            elif item.name == 'Backstage passes to a TAFKAL80ETC concert':
-                self.decrease_sell_in(item, 1)
-                if item.sell_in <= 10:
-                    self.increase_quality(item, 2)
-                
-                if item.sell_in <=5:
-                    self.increase_quality(item, 3)
-
-                if item.sell_in < 0:
-                    self.decrease_quality(item, item.quality)
-    
-            else:
-                self.decrease_sell_in(item, 1)
-                
-                if item.sell_in < 0:
-                    self.decrease_quality(item, 2)
-                else:
-                    self.decrease_quality(item, 1)
-
-                
-
-
-            # if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert":
-            #     if item.quality > 0:
-            #         if item.name != "Sulfuras, Hand of Ragnaros":
-            #             item.quality = item.quality - 1
-            # else:
-            #     if item.quality < 50:
-            #         item.quality = item.quality + 1
-            #         if item.name == "Backstage passes to a TAFKAL80ETC concert":
-            #             if item.sell_in < 11:
-            #                 if item.quality < 50:
-            #                     item.quality = item.quality + 1
-            #             if item.sell_in < 6:
-            #                 if item.quality < 50:
-            #                     item.quality = item.quality + 1
-            # if item.name != "Sulfuras, Hand of Ragnaros":
-            #     item.sell_in = item.sell_in - 1
-            # if item.sell_in < 0:
-            #     if item.name != "Aged Brie":
-            #         if item.name != "Backstage passes to a TAFKAL80ETC concert":
-            #             if item.quality > 0:
-            #                 if item.name != "Sulfuras, Hand of Ragnaros":
-            #                     item.quality = item.quality - 1
-            #         else:
-            #             item.quality = item.quality - item.quality
-            #     else:
-            #         if item.quality < 50:
-            #             item.quality = item.quality + 1
+        self.process_items()
 
 
 class Item:
