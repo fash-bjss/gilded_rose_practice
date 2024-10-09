@@ -34,7 +34,7 @@ func (i *Item) isPastSellByDate() bool {
 
 // This function must be declared on the "parent" struct first
 func (i *Item) ProcessItem() {
-
+	// This handles the default behaviour
 	i.decreaseSellin(1)
 
 	if i.isPastSellByDate() {
@@ -49,10 +49,6 @@ type Brie struct {
 }
 
 type Ticket struct {
-	*Item
-}
-
-type Default struct {
 	*Item
 }
 
