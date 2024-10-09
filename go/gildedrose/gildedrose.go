@@ -101,7 +101,7 @@ func PerformProcess(p Process) {
 	p.ProcessItem()
 }
 
-func ProcessEndOfDay(items []*Item) {
+func RunEndOfDayForItems(items []*Item) {
 
 	for _, item := range items {
 
@@ -124,6 +124,6 @@ func ProcessEndOfDay(items []*Item) {
 
 func UpdateQuality(items []*Item) {
 
-	ProcessEndOfDay(items)
+	RunEndOfDayForItems(items)
 
 }
