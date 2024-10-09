@@ -1,6 +1,6 @@
 package gildedrose
 
-type Items interface {
+type Process interface {
 	ProcessItem()
 }
 
@@ -32,16 +32,28 @@ func (i *Item) isPastSellByDate() bool {
 	return i.SellIn < 0
 }
 
+// This function must be declared on the "parent" struct first
+func (i *Item) ProcessItem() {
+
+	i.decreaseSellin(1)
+
+	if i.isPastSellByDate() {
+		i.decreaseQuality(2)
+	} else {
+		i.decreaseQuality(1)
+	}
+}
+
 type Brie struct {
-	Item
+	*Item
 }
 
 type Ticket struct {
-	Item
+	*Item
 }
 
 type Default struct {
-	Item
+	*Item
 }
 
 func (item *Brie) ProcessItem() {
@@ -84,47 +96,34 @@ func (item *Ticket) ProcessItem() {
 
 }
 
-func (item *Default) ProcessItem() {
-
-	item.decreaseSellin(1)
-
-	if item.isPastSellByDate() {
-		item.decreaseQuality(2)
-	} else {
-		item.decreaseQuality(1)
-	}
-
+// This function ties all the structs together so we only need one function
+func PerformProcess(p Process) {
+	p.ProcessItem()
 }
 
-func UpdateQuality(items []*Item) {
+func ProcessEndOfDay(items []*Item) {
 
 	for _, item := range items {
 
 		switch item.Name {
 		case "Aged Brie":
-			useBrieStruct := Brie{*item}
-			useBrieStruct.ProcessItem()
-
-			item.SellIn = useBrieStruct.SellIn
-			item.Quality = useBrieStruct.Quality
+			useBrieStruct := Brie{item}
+			PerformProcess(&useBrieStruct)
 
 		case "Sulfuras, Hand of Ragnaros":
 
 		case "Backstage passes to a TAFKAL80ETC concert":
-			useTicketStruct := Ticket{*item}
-			useTicketStruct.ProcessItem()
-
-			item.SellIn = useTicketStruct.SellIn
-			item.Quality = useTicketStruct.Quality
+			useTicketStruct := Ticket{item}
+			PerformProcess(&useTicketStruct)
 
 		default:
-			useDefaultStruct := Default{*item}
-			useDefaultStruct.ProcessItem()
-
-			item.SellIn = useDefaultStruct.SellIn
-			item.Quality = useDefaultStruct.Quality
+			PerformProcess(item)
 		}
-
 	}
+}
+
+func UpdateQuality(items []*Item) {
+
+	ProcessEndOfDay(items)
 
 }
