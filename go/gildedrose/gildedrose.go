@@ -40,6 +40,10 @@ type Ticket struct {
 	Item
 }
 
+type Default struct {
+	Item
+}
+
 func (item *Brie) ProcessItem() {
 	item.decreaseSellin(1)
 
@@ -80,6 +84,18 @@ func (item *Ticket) ProcessItem() {
 
 }
 
+func (item *Default) ProcessItem() {
+
+	item.decreaseSellin(1)
+
+	if item.isPastSellByDate() {
+		item.decreaseQuality(2)
+	} else {
+		item.decreaseQuality(1)
+	}
+
+}
+
 func UpdateQuality(items []*Item) {
 
 	for _, item := range items {
@@ -102,13 +118,11 @@ func UpdateQuality(items []*Item) {
 			item.Quality = useTicketStruct.Quality
 
 		default:
-			item.decreaseSellin(1)
+			useDefaultStruct := Default{*item}
+			useDefaultStruct.ProcessItem()
 
-			if item.isPastSellByDate() {
-				item.decreaseQuality(2)
-			} else {
-				item.decreaseQuality(1)
-			}
+			item.SellIn = useDefaultStruct.SellIn
+			item.Quality = useDefaultStruct.Quality
 		}
 
 	}
