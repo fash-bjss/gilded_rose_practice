@@ -38,7 +38,6 @@ class GildedRose(object):
                 converted_item = Ticket(item.name, item.sell_in, item.quality)
 
             case "Conjured Mana Cake":
-                print("reached")
                 converted_item = Conjured(item.name, item.sell_in, item.quality)
 
             case _:
