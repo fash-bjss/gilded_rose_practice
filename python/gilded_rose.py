@@ -27,22 +27,17 @@ class GildedRose(object):
         return self.sell_in < final_day
 
     def choose_and_convert_item(self, item):
-        match item.name:
-            case "Aged Brie":
-                converted_item = Brie(item.name, item.sell_in, item.quality)
-        
-            case "Sulfuras, Hand of Ragnaros":
-                converted_item = Sulfaras(item.name, item.sell_in, item.quality)
 
-            case "Backstage passes to a TAFKAL80ETC concert":
-                converted_item = Ticket(item.name, item.sell_in, item.quality)
+        item_classes = {
+            "Aged Brie": Brie,
+            "Sulfuras, Hand of Ragnaros": Sulfaras,
+            "Backstage passes to a TAFKAL80ETC concert": Ticket,
+            "Conjured Mana Cake": Conjured,
+            "Default": Default
+        }
+        chosen_class = item_classes.get(item.name, item_classes["Default"])
 
-            case "Conjured Mana Cake":
-                converted_item = Conjured(item.name, item.sell_in, item.quality)
-
-            case _:
-                converted_item = Default(item.name, item.sell_in, item.quality)
-        return converted_item
+        return chosen_class(item.name, item.sell_in, item.quality)
 
     def process_all_items(self):
         for item in self.items:
