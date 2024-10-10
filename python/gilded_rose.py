@@ -37,6 +37,10 @@ class GildedRose(object):
             case "Backstage passes to a TAFKAL80ETC concert":
                 converted_item = Ticket(item.name, item.sell_in, item.quality)
 
+            case "Conjured Mana Cake":
+                print("reached")
+                converted_item = Conjured(item.name, item.sell_in, item.quality)
+
             case _:
                 converted_item = Default(item.name, item.sell_in, item.quality)
         return converted_item
@@ -102,6 +106,14 @@ class Sulfaras(Item, GildedRose):
 
     def process_item(self):
         pass
+
+class Conjured(Item, GildedRose):
+    def __init__(self, name, sell_in, quality):
+        super().__init__(name, sell_in, quality)
+
+    def process_item(self):
+        self.decrease_sell_in(1)
+        self.decrease_quality(2)
 
 class Default(Item, GildedRose):
     def __init__(self, name, sell_in, quality):
