@@ -52,6 +52,10 @@ type Ticket struct {
 	*Item
 }
 
+type Sulfuras struct {
+	*Item
+}
+
 func (item *Brie) ProcessItem() {
 	item.decreaseSellin(1)
 
@@ -92,29 +96,34 @@ func (item *Ticket) ProcessItem() {
 
 }
 
-// This function ties all the structs together so we only need one function
-func PerformProcess(p Process) {
-	p.ProcessItem()
+func (item *Sulfuras) ProcessItem() {
+
+}
+
+// Returning the interface will allow you to return multiple structs that share the interface
+func ChooseAndCreateItem(item *Item) Process {
+
+	switch item.Name {
+	case "Aged Brie":
+		return &Brie{item}
+
+	case "Sulfuras, Hand of Ragnaros":
+		return &Sulfuras{item}
+
+	case "Backstage passes to a TAFKAL80ETC concert":
+		return &Ticket{item}
+
+	default:
+		return item
+	}
 }
 
 func RunEndOfDayForItems(items []*Item) {
 
 	for _, item := range items {
 
-		switch item.Name {
-		case "Aged Brie":
-			useBrieStruct := Brie{item}
-			PerformProcess(&useBrieStruct)
-
-		case "Sulfuras, Hand of Ragnaros":
-
-		case "Backstage passes to a TAFKAL80ETC concert":
-			useTicketStruct := Ticket{item}
-			PerformProcess(&useTicketStruct)
-
-		default:
-			PerformProcess(item)
-		}
+		chosenStruct := ChooseAndCreateItem(item)
+		chosenStruct.ProcessItem()
 	}
 }
 
