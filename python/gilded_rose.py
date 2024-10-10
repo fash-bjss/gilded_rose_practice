@@ -61,9 +61,6 @@ class Item:
 
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
-    
-    def process_item(self):
-        pass
 
 class Brie(Item, GildedRose):
     def __init__(self, name, sell_in, quality):
