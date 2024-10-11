@@ -44,62 +44,6 @@ func (i *Item) ProcessItem() {
 	}
 }
 
-type Brie struct {
-	*Item
-}
-
-type Ticket struct {
-	*Item
-}
-
-type Sulfuras struct {
-	*Item
-}
-
-func (b *Brie) ProcessItem() {
-	b.decreaseSellin(1)
-
-	if b.isPastSellByDate() {
-		b.increaseQuality(2)
-	} else {
-		b.increaseQuality(1)
-	}
-
-}
-
-func (t *Ticket) ProcessItem() {
-
-	type threshold struct {
-		first int
-		last  int
-	}
-
-	thresholds := threshold{
-		first: 11,
-		last:  6,
-	}
-
-	t.increaseQuality(1)
-
-	if t.SellIn < thresholds.first {
-		t.increaseQuality(1)
-	}
-
-	if t.SellIn < thresholds.last {
-		t.increaseQuality(1)
-	}
-
-	t.decreaseSellin(1)
-	if t.isPastSellByDate() {
-		t.decreaseQuality(t.Quality)
-	}
-
-}
-
-func (s *Sulfuras) ProcessItem() {
-
-}
-
 // Returning the interface will allow you to return multiple structs that share the interface
 func ChooseAndCreateItem(item_variant *Item) ItemVariant {
 
