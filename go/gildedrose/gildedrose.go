@@ -1,6 +1,6 @@
 package gildedrose
 
-type AllItems interface {
+type ItemVariant interface {
 	ProcessItem()
 }
 
@@ -56,18 +56,18 @@ type Sulfuras struct {
 	*Item
 }
 
-func (item *Brie) ProcessItem() {
-	item.decreaseSellin(1)
+func (b *Brie) ProcessItem() {
+	b.decreaseSellin(1)
 
-	if item.isPastSellByDate() {
-		item.increaseQuality(2)
+	if b.isPastSellByDate() {
+		b.increaseQuality(2)
 	} else {
-		item.increaseQuality(1)
+		b.increaseQuality(1)
 	}
 
 }
 
-func (item *Ticket) ProcessItem() {
+func (t *Ticket) ProcessItem() {
 
 	type threshold struct {
 		first int
@@ -79,42 +79,42 @@ func (item *Ticket) ProcessItem() {
 		last:  6,
 	}
 
-	item.increaseQuality(1)
+	t.increaseQuality(1)
 
-	if item.SellIn < thresholds.first {
-		item.increaseQuality(1)
+	if t.SellIn < thresholds.first {
+		t.increaseQuality(1)
 	}
 
-	if item.SellIn < thresholds.last {
-		item.increaseQuality(1)
+	if t.SellIn < thresholds.last {
+		t.increaseQuality(1)
 	}
 
-	item.decreaseSellin(1)
-	if item.isPastSellByDate() {
-		item.decreaseQuality(item.Quality)
+	t.decreaseSellin(1)
+	if t.isPastSellByDate() {
+		t.decreaseQuality(t.Quality)
 	}
 
 }
 
-func (item *Sulfuras) ProcessItem() {
+func (s *Sulfuras) ProcessItem() {
 
 }
 
 // Returning the interface will allow you to return multiple structs that share the interface
-func ChooseAndCreateItem(item *Item) AllItems {
+func ChooseAndCreateItem(item_variant *Item) ItemVariant {
 
-	switch item.Name {
+	switch item_variant.Name {
 	case "Aged Brie":
-		return &Brie{item}
+		return &Brie{item_variant}
 
 	case "Sulfuras, Hand of Ragnaros":
-		return &Sulfuras{item}
+		return &Sulfuras{item_variant}
 
 	case "Backstage passes to a TAFKAL80ETC concert":
-		return &Ticket{item}
+		return &Ticket{item_variant}
 
 	default:
-		return item
+		return item_variant
 	}
 }
 
