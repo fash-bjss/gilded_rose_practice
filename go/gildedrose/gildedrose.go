@@ -1,6 +1,6 @@
 package gildedrose
 
-type Process interface {
+type AllItems interface {
 	ProcessItem()
 }
 
@@ -101,7 +101,7 @@ func (item *Sulfuras) ProcessItem() {
 }
 
 // Returning the interface will allow you to return multiple structs that share the interface
-func ChooseAndCreateItem(item *Item) Process {
+func ChooseAndCreateItem(item *Item) AllItems {
 
 	switch item.Name {
 	case "Aged Brie":
